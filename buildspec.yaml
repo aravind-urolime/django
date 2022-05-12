@@ -5,9 +5,6 @@ phases:
     runtime-versions:
       nodejs: latest
     commands:
-      - echo Installing app dependencies...
-      - echo Run "yarn install"...
-      - yarn install
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 7) 
   pre_build:
     commands:
@@ -15,8 +12,6 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 258706517898.dkr.ecr.us-east-1.amazonaws.com
       - echo Build files...
-      - yarn clean
-      - yarn build
   build:
     commands:
       - echo Entered the build phase...
