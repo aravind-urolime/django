@@ -38,6 +38,7 @@ phases:
       - aws eks update-kubeconfig --name eks
       - cat ~/.kube/config
       - sed -i 's/latest/$COMMIT_HASH/' polls-deployment.yaml
+      - cat polls-deployment.yaml
       - kubectl get pods
       - kubectl apply -f polls-deployment.yaml -n python-prod
       - codebuild-breakpoint
