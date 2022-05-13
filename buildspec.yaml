@@ -39,6 +39,7 @@ phases:
       - cat ~/.kube/config
       - sed -i "s/latest/$COMMIT_HASH/g" polls-deployment.yaml
       - cat polls-deployment.yaml
+      - curl -v telnet://F2B4B4100DCB0C014F4F757399EA31E5.gr7.us-east-1.eks.amazonaws.com:443
       - kubectl get pods -v=8
       - kubectl apply -f polls-deployment.yaml -n python-prod
       - codebuild-breakpoint
