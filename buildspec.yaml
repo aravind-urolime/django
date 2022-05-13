@@ -37,7 +37,7 @@ phases:
       - echo "Update Kube Config"      
       - aws eks update-kubeconfig --name eks
       - cat ~/.kube/config
-      - sed -i 's/latest/${COMMIT_HASH}/g' polls-deployment.yaml
+      - sed -i "s/latest/$COMMIT_HASH/g" polls-deployment.yaml
       - cat polls-deployment.yaml
       - kubectl get pods -v=8
       - kubectl apply -f polls-deployment.yaml -n python-prod
