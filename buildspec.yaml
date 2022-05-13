@@ -9,14 +9,11 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      - echo Switching to ec2-user
-      - ls /home
-      - su - codebuild-user
       - echo Logging in to Amazon ECR...
-      - sudo docker login  -u $USER_NAME -p $PASSWORD
+      - docker login  -u $USER_NAME -p $PASSWORD
       - echo Build files...
       - echo install kubectl
-      - sudo yum install curl -y
+      - yum install curl -y
       - curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl
       - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
       - chmod +x kubectl
@@ -25,18 +22,19 @@ phases:
     commands:
       - echo Entered the build phase...
       - echo Building the Docker image...
-      - sudo docker build -t python .
-      - aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 258706517898.dkr.ecr.us-east-1.amazonaws.com
-      - sudo docker tag python:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$COMMIT_HASH
+      - docker build -t python .
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 258706517898.dkr.ecr.us-east-1.amazonaws.com
+      - docker tag python:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$COMMIT_HASH
   post_build:
     commands:
       - echo Entered the post_build phase...
       - echo Pushing the Docker image...
-      - sudo docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$COMMIT_HASH
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$COMMIT_HASH
       - echo Setup kubectl with our EKS Cluster              
       - echo "Update Kube Config"      
       - aws eks update-kubeconfig --name eks
-      - sudo sed -i 's/latest/$COMMIT_HASH/' polls-deployment.yaml
+      - cat ~/.kube/config
+      - sed -i 's/latest/$COMMIT_HASH/' polls-deployment.yaml
       - kubectl apply -f polls-deployment.yaml -n python-prod
       - codebuild-breakpoint
       
