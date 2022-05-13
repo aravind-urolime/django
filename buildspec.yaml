@@ -14,7 +14,6 @@ phases:
       - echo Build files...
       - echo install kubectl
       - yum install curl -y
-      - curl ifconfig.me
       - curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl
       - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
       - chmod +x kubectl
@@ -36,10 +35,7 @@ phases:
       - echo Setup kubectl with our EKS Cluster              
       - echo "Update Kube Config"      
       - aws eks update-kubeconfig --name eks
-      - cat ~/.kube/config
       - sed -i "s/latest/$COMMIT_HASH/g" polls-deployment.yaml
-      - cat polls-deployment.yaml
-      - kubectl get pods -v=8
       - kubectl apply -f polls-deployment.yaml -n python-prod
       - codebuild-breakpoint
       
