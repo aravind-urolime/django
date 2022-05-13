@@ -12,6 +12,14 @@ phases:
       - echo Logging in to Amazon ECR...
       - docker login  -u $USER_NAME -p $PASSWORD
       - echo Build files...
+      - echo install kubectl
+      - apt-get install curl -y
+      - curl -LO https://dl.k8s.io/release/v1.20.0/bin/linux/amd64/kubectl
+      - sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+      - chmod +x kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+      - echo Update Kube config Home Directory
+      - export KUBECONFIG=$HOME/.kube/config
   build:
     commands:
       - echo Entered the build phase...
@@ -24,3 +32,8 @@ phases:
       - echo Entered the post_build phase...
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$COMMIT_HASH
+      - echo Setup kubectl with our EKS Cluster              
+      - echo "Update Kube Config"      
+      - aws eks update-kubeconfig --name eks
+      - sed -i 's/latest/$COMMIT_HASH/' polls-deployment.yaml
+      - kubectl apply -f polls-deployment.yaml -n python-prod
