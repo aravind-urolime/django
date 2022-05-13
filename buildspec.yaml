@@ -10,6 +10,7 @@ phases:
     commands:
       - echo Entered the pre_build phase...
       - echo Switching to ec2-user
+      - ls /home
       - su - ec2-user
       - echo Logging in to Amazon ECR...
       - sudo docker login  -u $USER_NAME -p $PASSWORD
